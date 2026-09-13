@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Afamefune Insights — Trade Journal & AI Mentor</title>
+<!-- Custom Logo / Favicon Links -->
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0b0d12">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="header-container" style="text-align: center;">
+    <img src="/logo.png" alt="Afamefune Insights Logo" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; border: 2px solid var(--accent);">
+    <h1>Afamefune Insights</h1>
+    <p>Cloud sync trade journal & AI mentor</p>
+    <div style="font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--text-dim); display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 8px;">
+      <span>📧 charlesafamefune@gmail.com</span>
+      <span>
+        <a href="https://instagram.com/Afamefune0" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline; text-underline-offset: 3px;">
+          📸 @Afamefune0
+        </a>
+      </span>
+    </div>
+  </div>
+
+  <!-- AUTH (Hidden by default to prevent flash) -->
+  <div id="auth-container" class="card hidden">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('login')">Login</div>
+      <div class="tab" onclick="switchTab('signup')">Sign up</div>
+    </div>
+
+    <!-- FIX: removed the duplicate inline onsubmit="" attribute here — app.js
+         binds this form's submit exactly once via addEventListener. Having both
+         caused every login/signup/trade submission to fire twice. -->
+    <form id="login-form">
+      <div class="form-group">
+        <label>Email address</label>
+        <input type="email" id="login-email" required placeholder="name@example.com">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-password" required placeholder="••••••••">
+      </div>
+      <button type="submit" class="btn">Log in</button>
+      <div id="login-error" class="error-msg"></div>
+    </form>
+
+    <form id="signup-form" class="hidden">
+      <div class="form-group">
+        <label>Username / full name</label>
+        <input type="text" id="signup-username" required placeholder="Charles">
+      </div>
+      <div class="form-group">
+        <label>Email address</label>
+        <input type="email" id="signup-email" required placeholder="name@example.com">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="signup-password" required placeholder="••••••••">
+      </div>
+      <div class="form-group">
+        <label>Confirm password</label>
+        <input type="password" id="signup-confirm" required placeholder="••••••••">
+      </div>
+      <button type="submit" class="btn">Create account</button>
+      <div id="signup-error" class="error-msg"></div>
+    </form>
+
+    <div style="text-align:center; margin:16px 0; color:var(--text-dim); font-size:0.82rem;">or</div>
+
+    <a href="/auth/google" class="google-btn">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.49h4.84c-.21 1.12-.86 2.07-1.82 2.7v2.28h2.95c1.73-1.59 2.73-3.93 2.73-6.63z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.95-2.28c-.81.54-1.85.86-3.01.86-2.32 0-4.28-1.57-4.98-3.68H1.01v2.34C2.53 15.96 5.53 18 9 18z"/><path fill="#FBBC05" d="M4.02 10.82c-.18-.54-.28-1.12-.28-1.72s.1-1.18.28-1.72V5.04H1.01C.37 6.33 0 7.8 0 9.4s.37 3.07 1.01 4.36l3.01-2.34z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.47.89 11.43 0 9 0 5.53 0 2.53 2.04 1.01 5.04l3.01 2.34c.7-2.11 2.66-3.8 4.98-3.8z"/></svg>
+      Continue with Google
+    </a>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard-container" class="dashboard hidden">
+    <div class="welcome-bar">
+      <div>
+        <h3 id="welcome-user">Welcome!</h3>
+        <p id="user-email-display"></p>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button id="admin-tab-btn" class="logout-btn hidden" onclick="openAdminDashboard()" style="border-color: var(--accent); color: var(--accent);">Admin</button>
+        <button class="logout-btn" onclick="logout()">Log out</button>
+      </div>
+    </div>
+
+    <!-- ADVERTISEMENTS (native-looking, clearly labeled, never covers trading data) -->
+    <div id="ads-container" class="hidden"></div>
+
+    <!-- TRADING DISCIPLINE & RULE BANNER -->
+    <div style="background: var(--accent-soft); border: 1px solid rgba(226, 163, 77, 0.2); padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--accent);">
+      🧠 <b>Core Discipline:</b> Protect capital first. Respect your daily guardrail and stick to your technical structure.
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card" style="--stat-color: var(--accent);">
+        <h4>Total trades</h4>
+        <div class="stat-value num" id="stat-total">0</div>
+      </div>
+      <div class="stat-card" style="--stat-color: var(--win);">
+        <h4>Win rate</h4>
+        <div class="stat-value num" id="stat-winrate" style="color: var(--win);">0%</div>
+      </div>
+      <div class="stat-card" style="--stat-color: var(--blue);">
+        <h4>Record</h4>
+        <div class="stat-value num" id="stat-record" style="font-size:1.15rem;">0W / 0L</div>
+      </div>
+      <div class="stat-card" style="--stat-color: var(--accent);">
+        <h4>Current streak</h4>
+        <div class="stat-value num" id="stat-streak">—</div>
+      </div>
+      <div class="stat-card" style="--stat-color: var(--accent);">
+        <h4>Avg R:R</h4>
+        <div class="stat-value num" id="stat-avgrr">0.00R</div>
+      </div>
+      <div class="stat-card" style="--stat-color: var(--win);">
+        <h4>Profit factor</h4>
+        <div class="stat-value num" id="stat-profitfactor">0.00</div>
+      </div>
+    </div>
+
+    <!-- PERSONAL RISK GUARDRAIL (running trades, not tied to a specific prop account) -->
+    <div class="panel">
+      <div class="panel-header-row">
+        <h3>Open risk guardrail</h3>
+        <span style="font-size: 0.8rem; color: var(--text-dim);">Reference limit: $500/day</span>
+      </div>
+      <p class="panel-sub" style="margin-bottom: 8px;">Combined risk currently open across all Running trades.</p>
+      <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-family: 'JetBrains Mono', monospace;">
+        <span id="guardrail-status-text">Safe zone (0.0% risk exposed)</span>
+        <span id="guardrail-pct">100% Buffer</span>
+      </div>
+      <div class="guardrail-bar-bg">
+        <div class="guardrail-bar-fill" id="guardrail-bar" style="width: 100%;"></div>
+      </div>
+    </div>
+
+    <!-- FOREX MARKET SESSION TRACKER (timezone-aware: Africa/Lagos, Europe/London, America/New_York, Asia/Tokyo) -->
+    <div class="panel session-panel">
+      <div class="panel-header-row">
+        <h3>Forex session tracker</h3>
+        <div id="wat-time-display" class="num session-wat-clock">--:--:-- WAT</div>
+      </div>
+      <div id="active-session-display" class="session-active-line">Checking sessions...</div>
+      <div id="session-overlap" class="hidden"></div>
+      <div id="session-remaining" class="session-sub-line"></div>
+      <div id="session-countdown" class="session-sub-line">Calculating countdown...</div>
+    </div>
+
+    <!-- LIVE MARKET BOARD -->
+    <div class="panel market-panel">
+      <div class="panel-header-row">
+        <h3>Live markets</h3>
+        <span class="market-updated" id="market-updated">—</span>
+      </div>
+      <div class="market-board" id="market-board">
+        <div class="market-card" data-symbol="GBPUSD">
+          <div class="market-symbol">GBPUSD</div>
+          <div class="market-price num" id="mkt-GBPUSD-price">—</div>
+          <div class="market-change num" id="mkt-GBPUSD-change">—</div>
+          <div class="market-status" id="mkt-GBPUSD-status"><span class="dot"></span>OFFLINE</div>
+        </div>
+        <div class="market-card" data-symbol="USDCAD">
+          <div class="market-symbol">USDCAD</div>
+          <div class="market-price num" id="mkt-USDCAD-price">—</div>
+          <div class="market-change num" id="mkt-USDCAD-change">—</div>
+          <div class="market-status" id="mkt-USDCAD-status"><span class="dot"></span>OFFLINE</div>
+        </div>
+        <div class="market-card" data-symbol="XAUUSD">
+          <div class="market-symbol">GOLD</div>
+          <div class="market-price num" id="mkt-XAUUSD-price">—</div>
+          <div class="market-change num" id="mkt-XAUUSD-change">—</div>
+          <div class="market-status" id="mkt-XAUUSD-status"><span class="dot"></span>OFFLINE</div>
+        </div>
+        <div class="market-card" data-symbol="BTCUSD">
+          <div class="market-symbol">BTCUSD</div>
+          <div class="market-price num" id="mkt-BTCUSD-price">—</div>
+          <div class="market-change num" id="mkt-BTCUSD-change">—</div>
+          <div class="market-status" id="mkt-BTCUSD-status"><span class="dot"></span>OFFLINE</div>
+        </div>
+        <div class="market-card" data-symbol="USDJPY">
+          <div class="market-symbol">USDJPY</div>
+          <div class="market-price num" id="mkt-USDJPY-price">—</div>
+          <div class="market-change num" id="mkt-USDJPY-change">—</div>
+          <div class="market-status" id="mkt-USDJPY-status"><span class="dot"></span>OFFLINE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROP FIRM ACCOUNT TRACKER -->
+    <div class="panel">
+      <div class="panel-header-row">
+        <h3>Prop firm account tracker</h3>
+        <button class="btn" style="width:auto; padding:7px 14px; font-size:0.82rem; margin-top:0;" onclick="openPropFirmModal()">+ New Account</button>
+      </div>
+      <div id="propfirm-account-list" class="propfirm-account-list"></div>
+
+      <div style="margin: 14px 0 6px;">
+        <label style="margin-bottom:4px;">Viewing account</label>
+        <select id="propfirm-account-switcher" onchange="onPropFirmSwitcherChange(this.value)">
+          <option value="">— Select an account —</option>
+        </select>
+      </div>
+
+      <div id="propfirm-warning" class="propfirm-warning hidden"></div>
+      <div id="propfirm-summary"></div>
+      <div id="propfirm-chart" class="propfirm-chart"></div>
+
+      <div style="margin-top:14px; text-align:right;">
+        <button class="btn danger-btn" style="width:auto; padding:6px 12px; font-size:0.78rem; margin-top:0;" onclick="if(document.getElementById('propfirm-account-switcher').value) deletePropFirmAccount(document.getElementById('propfirm-account-switcher').value); else alert('Select an account first.');">Delete selected account</button>
+        <button class="btn" style="width:auto; padding:6px 12px; font-size:0.78rem; margin-top:0;" onclick="if(document.getElementById('propfirm-account-switcher').value) openPropFirmModal(document.getElementById('propfirm-account-switcher').value); else alert('Select an account first.');">Edit selected account</button>
+      </div>
+    </div>
+
+    <!-- COMPACT TRADE ENTRY WITH TAGS, SCREENSHOT UPLOAD & PROP FIRM RISK -->
+    <div class="panel">
+      <h3>Log & analyze new trade</h3>
+      <p class="panel-sub">Save a setup and get an instant critique from your AI mentor.</p>
+      <form id="trade-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Currency pair</label>
+            <input type="text" id="currencyPair" required placeholder="GBPUSD">
+          </div>
+          <div class="form-group">
+            <label>Direction</label>
+            <select id="tradeDirection">
+              <option value="Buy">BUY</option>
+              <option value="Sell">SELL</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Entry price</label>
+            <input type="number" step="any" id="entryPrice" required placeholder="1.3597">
+          </div>
+          <div class="form-group">
+            <label>Exit price</label>
+            <input type="number" step="any" id="exitPrice" placeholder="1.3600">
+          </div>
+          <div class="form-group">
+            <label>Stop loss</label>
+            <input type="number" step="any" id="stopLoss" placeholder="1.3570">
+          </div>
+          <div class="form-group">
+            <label>Take profit</label>
+            <input type="number" step="any" id="takeProfit" placeholder="1.3675">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Trading session</label>
+          <select id="tradeSession">
+            <option value="London">London</option>
+            <option value="New York">New York</option>
+            <option value="Asian">Asian</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Setup & strategy tags</label>
+          <div class="strategy-pills" id="strategy-pills-container">
+            <div class="strategy-pill" onclick="toggleTag(this)">Fair Value Gap</div>
+            <div class="strategy-pill" onclick="toggleTag(this)">Order Block</div>
+            <div class="strategy-pill" onclick="toggleTag(this)">78.6% Fibonacci</div>
+            <div class="strategy-pill" onclick="toggleTag(this)">RSI Divergence</div>
+            <div class="strategy-pill" onclick="toggleTag(this)">Liquidity Sweep</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Prop firm account (optional)</label>
+          <select id="tradePropFirmAccount">
+            <option value="">— Personal / Not linked —</option>
+          </select>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Amount risked ($)</label>
+            <input type="number" step="any" id="tradeRiskAmount" placeholder="100">
+          </div>
+          <div class="form-group">
+            <label>Realized P/L ($, if closed)</label>
+            <input type="number" step="any" id="tradeRealizedPL" placeholder="250 or -100">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Outcome</label>
+          <select id="tradeOutcome">
+            <option value="Running">Running</option>
+            <option value="Win">Win</option>
+            <option value="Loss">Loss</option>
+            <option value="BreakEven">Break-even</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Chart screenshot upload</label>
+          <input type="file" id="chartScreenshotInput" accept="image/*" class="file-input">
+          <input type="hidden" id="chartScreenshot">
+        </div>
+
+        <div class="form-group">
+          <label>Trade notes / thesis</label>
+          <textarea id="tradeNotes" rows="2" placeholder="Setup based on 4hr Fair Value Gap & order block..."></textarea>
+        </div>
+        <button type="submit" class="btn">Save & analyze with AI mentor</button>
+      </form>
+      <div id="ai-result" class="ai-box hidden"></div>
+    </div>
+
+    <!-- JOURNALED TRADES PANEL WITH SEARCH, FILTERS & CSV EXPORT -->
+    <div class="panel">
+      <div class="panel-header-row">
+        <h3>Your journaled trades</h3>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button onclick="exportTradesCSV()" class="btn" style="width:auto; padding:7px 14px; font-size:0.82rem; margin-top:0; background: var(--accent-soft); border: 1px solid var(--accent); color: var(--accent);">Export CSV</button>
+          <button onclick="confirmReset()" class="btn danger-btn" style="width:auto; padding:7px 14px; font-size:0.82rem; margin-top:0;">Reset all data</button>
+        </div>
+      </div>
+
+      <div class="filter-bar" style="margin-top: 15px;">
+        <input type="text" id="tradeSearchInput" placeholder="Search pair or notes...">
+        <select id="outcomeFilterSelect">
+          <option value="All">All Outcomes</option>
+          <option value="Win">Win</option>
+          <option value="Loss">Loss</option>
+          <option value="BreakEven">Break-even</option>
+          <option value="Running">Running</option>
+        </select>
+        <select id="sessionFilterSelect">
+          <option value="All">All Sessions</option>
+          <option value="London">London</option>
+          <option value="New York">New York</option>
+          <option value="Asian">Asian</option>
+        </select>
+      </div>
+
+      <div id="trades-list"></div>
+    </div>
+
+    <!-- SUPPORT / DONATION SECTION -->
+    <div class="panel donation-panel">
+      <h3>Support the project</h3>
+      <p class="panel-sub">Enjoying the platform? You can support continued development with a donation on BNB Smart Chain. Sending funds is entirely optional.</p>
+      <div class="donation-box">
+        <img id="donation-qr" class="donation-qr" alt="BNB Smart Chain donation QR code" onerror="this.style.display='none'">
+        <div style="flex:1; min-width:0;">
+          <div class="modal-field-label">BNB Smart Chain (BEP-20) Address</div>
+          <div id="donation-address" class="num donation-address">Loading...</div>
+          <button class="btn" style="width:auto; padding:8px 16px; font-size:0.82rem;" onclick="copyDonationAddress()">Copy address</button>
+          <span id="donation-copied-msg" class="success-msg hidden" style="display:inline-block; margin-left:8px;">Address copied!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRADE MODAL -->
+  <div id="trade-modal" class="modal-overlay hidden" onclick="closeModalOnOverlay(event)">
+    <div class="modal-content">
+      <div class="modal-top">
+        <h3 id="modal-pair">—</h3>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-grid">
+        <div>
+          <div class="modal-field-label">Direction</div>
+          <div class="modal-field-value" id="modal-direction">—</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Outcome</div>
+          <div class="modal-field-value" id="modal-outcome">—</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Entry price</div>
+          <div class="modal-field-value num" id="modal-entry">—</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Exit price</div>
+          <div class="modal-field-value num" id="modal-exit">—</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Stop loss</div>
+          <!-- FIX: this was class="modal-field-label" (rendered like a dim label
+               instead of a bold value, unlike its siblings). Corrected below. -->
+          <div class="modal-field-value num" id="modal-sl">—</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Take profit</div>
+          <div class="modal-field-value num" id="modal-tp">—</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 15px;">
+        <div class="modal-field-label">Session</div>
+        <div class="modal-field-value" id="modal-session">London</div>
+      </div>
+
+      <div style="margin-top: 15px;">
+        <div class="modal-field-label">Strategy Tags</div>
+        <div class="modal-field-value" id="modal-tags">None</div>
+      </div>
+
+      <div id="modal-account-wrap" class="hidden" style="margin-top: 15px;">
+        <div class="modal-grid">
+          <div><div class="modal-field-label">Prop Firm Account</div><div class="modal-field-value" id="modal-account">—</div></div>
+          <div><div class="modal-field-label">Risk Amount</div><div class="modal-field-value num" id="modal-risk">—</div></div>
+          <div><div class="modal-field-label">Realized P/L</div><div class="modal-field-value num" id="modal-pl">—</div></div>
+        </div>
+      </div>
+
+      <div class="modal-notes-label" style="margin-top: 15px;">Trade notes / thesis</div>
+      <div class="modal-notes" id="modal-notes">No notes recorded.</div>
+
+      <div id="modal-screenshot-container" class="hidden" style="margin-top: 15px;">
+        <div class="modal-field-label" style="margin-bottom: 6px;">Chart Screenshot</div>
+        <img id="modal-screenshot-img" class="screenshot-preview" alt="Chart Setup Screenshot">
+      </div>
+    </div>
+  </div>
+
+  <!-- PROP FIRM ACCOUNT CREATE/EDIT MODAL -->
+  <div id="propfirm-modal" class="modal-overlay hidden" onclick="if(event.target.id==='propfirm-modal') closePropFirmModal()">
+    <div class="modal-content">
+      <div class="modal-top">
+        <h3 id="propfirm-modal-title">New Prop Firm Account</h3>
+        <button class="modal-close" onclick="closePropFirmModal()">✕</button>
+      </div>
+      <form id="propfirm-form">
+        <input type="hidden" id="propfirm-edit-id">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Prop firm name</label>
+            <input type="text" id="pf-firmName" placeholder="FTMO">
+          </div>
+          <div class="form-group">
+            <label>Account name</label>
+            <input type="text" id="pf-accountName" required placeholder="Challenge #1">
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Account size ($)</label>
+            <input type="number" step="any" id="pf-accountSize" required placeholder="10000">
+          </div>
+          <div class="form-group">
+            <label>Phase / status</label>
+            <select id="pf-phase">
+              <option value="Evaluation">Evaluation</option>
+              <option value="Verification">Verification</option>
+              <option value="Funded">Funded</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Max overall drawdown (%)</label>
+            <input type="number" step="any" id="pf-maxDD" value="10">
+          </div>
+          <div class="form-group">
+            <label>Max daily drawdown (%)</label>
+            <input type="number" step="any" id="pf-dailyDD" value="5">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Profit target (%)</label>
+          <input type="number" step="any" id="pf-target" value="10">
+        </div>
+        <div class="form-group">
+          <label>Optional account label (never a password/credential)</label>
+          <input type="text" id="pf-label" placeholder="e.g. Acct #4471">
+        </div>
+        <button type="submit" class="btn">Save account</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADMIN DASHBOARD MODAL -->
+  <div id="admin-modal" class="modal-overlay hidden" onclick="if(event.target.id==='admin-modal') closeAdminDashboard()">
+    <div class="modal-content admin-modal-content">
+      <div class="modal-top">
+        <h3>Admin Dashboard</h3>
+        <button class="modal-close" onclick="closeAdminDashboard()">✕</button>
+      </div>
+      <div class="admin-nav">
+        <button class="admin-nav-btn active" data-section="overview" onclick="switchAdminSection('overview')">Overview</button>
+        <button class="admin-nav-btn" data-section="users" onclick="switchAdminSection('users')">Users</button>
+        <button class="admin-nav-btn" data-section="trades" onclick="switchAdminSection('trades')">Trades</button>
+        <button class="admin-nav-btn" data-section="ads" onclick="switchAdminSection('ads')">Advertisements</button>
+      </div>
+
+      <div id="admin-section-overview" class="admin-panel-section">
+        <div class="stats-grid" id="admin-overview-grid"></div>
+      </div>
+
+      <div id="admin-section-users" class="admin-panel-section hidden">
+        <div id="admin-users-list"></div>
+      </div>
+
+      <div id="admin-section-trades" class="admin-panel-section hidden">
+        <div class="filter-bar">
+          <input type="text" id="admin-trade-filter-user" placeholder="Filter by username...">
+          <input type="text" id="admin-trade-filter-pair" placeholder="Filter by pair...">
+          <select id="admin-trade-filter-outcome">
+            <option value="All">All Outcomes</option>
+            <option value="Win">Win</option>
+            <option value="Loss">Loss</option>
+            <option value="BreakEven">Break-even</option>
+            <option value="Running">Running</option>
+          </select>
+          <button class="btn" style="width:auto; padding:8px 14px; margin:0;" onclick="loadAdminTrades()">Filter</button>
+        </div>
+        <div id="admin-trades-list"></div>
+      </div>
+
+      <div id="admin-section-ads" class="admin-panel-section hidden">
+        <div style="text-align:right; margin-bottom:12px;">
+          <button class="btn" style="width:auto; padding:8px 14px; margin:0;" onclick="openAdModal()">+ New Advertisement</button>
+        </div>
+        <div id="admin-ads-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN: USER PERFORMANCE / IMAGE VIEWER MODAL -->
+  <div id="admin-user-modal" class="modal-overlay hidden" onclick="if(event.target.id==='admin-user-modal') closeAdminUserModal()">
+    <div class="modal-content">
+      <div class="modal-top">
+        <h3>Details</h3>
+        <button class="modal-close" onclick="closeAdminUserModal()">✕</button>
+      </div>
+      <div id="admin-user-modal-body">Loading...</div>
+    </div>
+  </div>
+
+  <!-- ADMIN: ADVERTISEMENT CREATE/EDIT MODAL -->
+  <div id="ad-modal" class="modal-overlay hidden" onclick="if(event.target.id==='ad-modal') closeAdModal()">
+    <div class="modal-content">
+      <div class="modal-top">
+        <h3 id="ad-modal-title">New Advertisement</h3>
+        <button class="modal-close" onclick="closeAdModal()">✕</button>
+      </div>
+      <form id="ad-form">
+        <input type="hidden" id="ad-edit-id">
+        <div class="form-group">
+          <label>Advertisement title</label>
+          <input type="text" id="ad-title" required placeholder="Trade with a professional prop firm">
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Company name</label>
+            <input type="text" id="ad-company" placeholder="FTMO">
+          </div>
+          <div class="form-group">
+            <label>Priority (higher shows first)</label>
+            <input type="number" id="ad-priority" value="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="ad-description" rows="2" placeholder="Short description shown to users"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Destination URL</label>
+          <input type="url" id="ad-url" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label>Call-to-action text</label>
+          <input type="text" id="ad-cta" placeholder="Learn More">
+        </div>
+        <div class="form-group">
+          <label>Advertisement image (JPG/PNG/WebP, under 4MB)</label>
+          <input type="file" id="adImageInput" accept="image/png,image/jpeg,image/webp" class="file-input">
+          <input type="hidden" id="adImageData">
+          <img id="adImagePreview" class="screenshot-preview hidden" alt="Ad preview">
+        </div>
+        <div class="form-group" style="display:flex; align-items:center; gap:8px;">
+          <input type="checkbox" id="ad-active" checked style="width:auto;">
+          <label style="margin:0;">Active</label>
+        </div>
+        <button type="submit" class="btn">Save advertisement</button>
+      </form>
+    </div>
+  </div>
+
+<script src="app.js"></script>
+</body>
+</html>

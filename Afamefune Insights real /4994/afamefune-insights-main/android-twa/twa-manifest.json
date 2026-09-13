@@ -1,0 +1,31 @@
+{
+  "packageId": "com.afamefune.insights",
+  "host": "afamefune-insights.onrender.com",
+  "name": "Afamefune Insights",
+  "launcherName": "Afamefune",
+  "display": "standalone",
+  "themeColor": "#0b0d12",
+  "themeColorDark": "#0b0d12",
+  "navigationColor": "#0b0d12",
+  "navigationColorDark": "#0b0d12",
+  "backgroundColor": "#0b0d12",
+  "enableNotifications": false,
+  "startUrl": "/",
+  "iconUrl": "https://afamefune-insights.onrender.com/icons/icon-512.png",
+  "maskableIconUrl": "https://afamefune-insights.onrender.com/icons/icon-512-maskable.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "afamefune"
+  },
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://afamefune-insights.onrender.com/manifest.json",
+  "fallbackType": "customtabs",
+  "orientation": "portrait",
+  "minSdkVersion": 21,
+  "isChromeOSOnly": false,
+  "fullScopeUrl": "https://afamefune-insights.onrender.com/"
+}
