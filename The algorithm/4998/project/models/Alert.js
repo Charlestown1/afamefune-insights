@@ -1,2 +1,0 @@
-const mongoose=require('mongoose');
-const schema=new mongoose.Schema({userId:{type:mongoose.Schema.Types.ObjectId,ref:'User',required:true},type:String,symbol:String,title:String,message:String,data:mongoose.Schema.Types.Mixed,channels:[String],delivery:{browser:String,email:String,telegram:String},dedupeKey:{type:String,unique:true},readAt:Date},{timestamps:true}); schema.index({userId:1,createdAt:-1}); module.exports=mongoose.models.Alert||mongoose.model('Alert',schema);

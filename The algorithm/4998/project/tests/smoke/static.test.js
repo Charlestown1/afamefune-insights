@@ -1,1 +1,0 @@
-const test=require('node:test');const assert=require('node:assert/strict');const fs=require('fs');for(const f of ['public/index.html','public/styles.css','public/app.js','public/manifest.json','public/service-worker.js','public/offline.html'])test(`static asset exists: ${f}`,()=>assert.ok(fs.existsSync(f)));

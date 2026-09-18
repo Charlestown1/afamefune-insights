@@ -1,1 +1,0 @@
-const router=require('express').Router();const calendar=require('../services/economicCalendar');router.get('/',async(req,res)=>{try{res.json({events:await calendar.upcoming(req.query)})}catch(e){res.status(503).json({error:e.message})}});module.exports=router;

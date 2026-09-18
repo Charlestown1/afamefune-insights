@@ -1,1 +1,0 @@
-const test=require('node:test');const assert=require('node:assert/strict');const {riskReward}=require('../../services/signalCalculator');test('risk reward',()=>assert.equal(riskReward(100,90,120),2));

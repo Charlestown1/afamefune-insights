@@ -1,2 +1,0 @@
-function riskReward(entry,stop,tp){const risk=Math.abs(entry-stop);return risk?Math.abs(tp-entry)/risk:null} function snapshot(s){return {market:s.market,symbol:s.symbol,direction:s.direction,timeframe:s.timeframe,entryPrice:s.entryPrice,initialStopLoss:s.initialStopLoss,initialTp1:s.initialTp1,initialTp2:s.initialTp2,confidence:s.confidence,risk:s.risk,analysis:s.analysis,status:s.status,published:s.published,publishedAt:s.publishedAt}}
-module.exports={riskReward,snapshot};

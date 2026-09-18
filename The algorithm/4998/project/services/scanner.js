@@ -1,5 +1,0 @@
-const md=require('./marketData');const ind=require('./indicators');
-const universe=[['forex','GBP/USD'],['forex','EUR/USD'],['forex','USD/JPY'],['forex','USD/CAD'],['forex','AUD/USD'],['forex','USD/CHF'],['crypto','BTC/USD'],['crypto','ETH/USD'],['crypto','SOL/USD'],['crypto','XRP/USD'],['crypto','SUI/USD'],['metals','XAU/USD']];
-async function scanSymbol(market,symbol){let candles=await md.twelve(symbol,'1day',250),closes=candles.map(x=>x.close),score=ind.score(candles),rsi=ind.rsi(closes),e20=ind.ema(closes,20),e50=ind.ema(closes,50),e200=ind.ema(closes,200);return {market,symbol,price:closes.at(-1),score,bias:score>=70?'BULLISH':score<=30?'BEARISH':'NEUTRAL',rsi,ema20:e20,ema50:e50,ema200:e200,structure:ind.structure(candles),breakout:ind.breakout(candles),observedAt:candles.at(-1)?.time||new Date().toISOString()}}
-async function scan(){let out=[];for(const [m,s] of universe){try{out.push(await scanSymbol(m,s))}catch(e){out.push({market:m,symbol:s,error:e.message,bias:'UNAVAILABLE'})}}return out}
-exports.scan=scan;exports.universe=universe;

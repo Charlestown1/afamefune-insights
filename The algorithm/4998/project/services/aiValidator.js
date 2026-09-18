@@ -1,1 +1,0 @@
-function validate(x){if(!x||typeof x!=='object')return false;return Array.isArray(x.observedData)&&typeof x.interpretation==='string'&&Array.isArray(x.risks)&&typeof x.conclusion==='string'&&['BULLISH','BEARISH','NEUTRAL'].includes(x.bias)&&Number.isFinite(x.confidence)&&x.confidence>=0&&x.confidence<=100}module.exports={validate};
