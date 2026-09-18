@@ -1,0 +1,38 @@
+0 verbose cli /usr/bin/node /usr/bin/npm
+1 info using npm@10.9.1
+2 info using node@v22.23.2
+3 silly config load:file:/usr/lib/node_modules/npm/npmrc
+4 silly config load:file:/public/.npmrc
+5 silly config load:file:/etc/npmrc
+6 verbose title npm install
+7 verbose argv "install"
+8 verbose logfile logs-max:10 dir:/public/.npm/_logs/2026-09-18T20_02_24_464Z-
+9 verbose logfile /public/.npm/_logs/2026-09-18T20_02_24_464Z-debug-0.log
+10 silly logfile done cleaning log files
+11 silly packumentCache heap:2197815296 maxSize:549453824 maxEntrySize:274726912
+12 silly idealTree buildDeps
+13 silly reify moves {}
+14 verbose stack Error: Could not read package.json: Error: ENOENT: no such file or directory, open '/public/package.json'
+14 verbose stack     at async open (node:internal/fs/promises:639:25)
+14 verbose stack     at async readFile (node:internal/fs/promises:1252:14)
+14 verbose stack     at async read (/usr/lib/node_modules/npm/node_modules/@npmcli/package-json/lib/read-package.js:9:18)
+14 verbose stack     at async PackageJson.load (/usr/lib/node_modules/npm/node_modules/@npmcli/package-json/lib/index.js:130:31)
+14 verbose stack     at async PackageJson.normalize (/usr/lib/node_modules/npm/node_modules/@npmcli/package-json/lib/index.js:116:5)
+14 verbose stack     at async runScript (/usr/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/run-script.js:11:28)
+14 verbose stack     at async Install.exec (/usr/lib/node_modules/npm/lib/commands/install.js:163:9)
+14 verbose stack     at async Npm.exec (/usr/lib/node_modules/npm/lib/npm.js:207:9)
+14 verbose stack     at async module.exports (/usr/lib/node_modules/npm/lib/cli/entry.js:74:5)
+15 error code ENOENT
+16 error syscall open
+17 error path /public/package.json
+18 error errno -2
+19 error enoent Could not read package.json: Error: ENOENT: no such file or directory, open '/public/package.json'
+20 error enoent This is related to npm not being able to find a file.
+20 error enoent
+21 verbose cwd /public
+22 verbose os Linux 4.14.186-g112ef0acd83d-dirty
+23 verbose node v22.23.2
+24 verbose npm  v10.9.1
+25 verbose exit -2
+26 verbose code -2
+27 error A complete log of this run can be found in: /public/.npm/_logs/2026-09-18T20_02_24_464Z-debug-0.log

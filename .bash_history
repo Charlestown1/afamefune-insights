@@ -81,3 +81,10 @@ git add .
 git commit -m "Final clean push for Afamefune Insights repository"
 git branch -M main
 git push -u origin main --force
+cd mmuo
+npm install
+apk add npm
+cd mmuo
+npm install
+cd MMUO
+cd 5004
