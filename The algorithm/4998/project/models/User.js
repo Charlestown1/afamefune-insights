@@ -1,0 +1,3 @@
+const mongoose=require('mongoose');
+const schema=new mongoose.Schema({name:{type:String,trim:true,maxlength:80},email:{type:String,required:true,unique:true,lowercase:true,trim:true},passwordHash:{type:String,select:false},role:{type:String,enum:['user','admin'],default:'user'},plan:{type:String,enum:['free','pro','pro_plus'],default:'free'},googleId:{type:String,sparse:true},authProvider:{type:String,enum:['local','google'],default:'local'},timezone:{type:String,default:'UTC'},favorites:{type:[String],default:[]},watchlist:{type:[String],default:[]},notificationsEnabled:{type:Boolean,default:true},lastLoginAt:Date},{timestamps:true});
+module.exports=mongoose.models.User||mongoose.model('User',schema);

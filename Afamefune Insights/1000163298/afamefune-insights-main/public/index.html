@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Afamefune Insights — Trade Journal & AI Mentor</title>
+<!-- Custom Logo / Favicon Links -->
+<link rel="icon" type="image/png" href="/logo.png">
+<link rel="apple-touch-icon" href="/logo.png">
+<link rel="manifest" href="/manifest.json">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* Additional styles matching your exact theme for new features */
+  .strategy-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .strategy-pill {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-dim, #94a3b8);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Inter', sans-serif;
+  }
+  .strategy-pill.active {
+    background: rgba(234, 179, 8, 0.15);
+    border-color: var(--accent, #eab308);
+    color: var(--accent, #eab308);
+    font-weight: 500;
+  }
+  .guardrail-bar-bg {
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 8px;
+    height: 10px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .guardrail-bar-fill {
+    height: 100%;
+    background: var(--win, #22c55e);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+  .screenshot-preview {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .file-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+    color: var(--text, #f8fafc);
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  .file-input::-webkit-file-upload-button {
+    background: rgba(234, 179, 8, 0.15);
+    border: 1px solid var(--accent, #eab308);
+    color: var(--accent, #eab308);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    margin-right: 10px;
+  }
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+  }
+  .filter-bar input, .filter-bar select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: var(--text, #f8fafc);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    outline: none;
+  }
+  .filter-bar input {
+    flex: 1;
+    min-width: 180px;
+  }
+</style>
+</head>
+<body>
+
+  <div class="header-container" style="text-align: center;">
+    <img src="/logo.png" alt="Afamefune Insights Logo" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; border: 2px solid #eab308;">
+    <h1>Afamefune Insights</h1>
+    <p>Cloud sync trade journal & AI mentor</p>
+    <div style="font-family: 'Inter', sans-serif; font-size: 0.85rem; color: #94a3b8; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 8px;">
+      <span>📧 charlesafamefune@gmail.com</span>
+      <span>
+        <a href="https://instagram.com/Afamefune0" target="_blank" rel="noopener noreferrer" style="color: #eab308; text-decoration: underline; text-underline-offset: 3px;">
+          📸 @Afamefune0
+        </a>
+      </span>
+    </div>
+  </div>
+
+  <!-- AUTH (Hidden by default to prevent flash) -->
+  <div id="auth-container" class="card hidden">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('login')">Login</div>
+      <div class="tab" onclick="switchTab('signup')">Sign up</div>
+    </div>
+
+    <form id="login-form" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>Email address</label>
+        <input type="email" id="login-email" required placeholder="name@example.com">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-password" required placeholder="••••••••">
+      </div>
+      <button type="submit" class="btn">Log in</button>
+      <div id="login-error" class="error-msg"></div>
+    </form>
+
+    <form id="signup-form" class="hidden" onsubmit="handleSignup(event)">
+      <div class="form-group">
+        <label>Username / full name</label>
+        <input type="text" id="signup-username" required placeholder="Charles">
+      </div>
+      <div class="form-group">
+        <label>Email address</label>
+        <input type="email" id="signup-email" required placeholder="name@example.com">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="signup-password" required placeholder="••••••••">
+      </div>
+      <div class="form-group">
+        <label>Confirm password</label>
+        <input type="password" id="signup-confirm" required placeholder="••••••••">
+      </div>
+      <button type="submit" class="btn">Create account</button>
+      <div id="signup-error" class="error-msg"></div>
+    </form>
+
+    <div style="text-align:center; margin:16px 0; color:var(--text-dim); font-size:0.82rem;">or</div>
+
+    <a href="/auth/google" class="google-btn">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.49h4.84c-.21 1.12-.86 2.07-1.82 2.7v2.28h2.95c1.73-1.59 2.73-3.93 2.73-6.63z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.95-2.28c-.81.54-1.85.86-3.01.86-2.32 0-4.28-1.57-4.98-3.68H1.01v2.34C2.53 15.96 5.53 18 9 18z"/><path fill="#FBBC05" d="M4.02 10.82c-.18-.54-.28-1.12-.28-1.72s.1-1.18.28-1.72V5.04H1.01C.37 6.33 0 7.8 0 9.4s.37 3.07 1.01 4.36l3.01-2.34z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.47.89 11.43 0 9 0 5.53 0 2.53 2.04 1.01 5.04l3.01 2.34c.7-2.11 2.66-3.8 4.98-3.8z"/></svg>
+      Continue with Google
+    </a>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard-container" class="dashboard hidden">
+    <div class="welcome-bar">
+      <div>
+        <h3 id="welcome-user">Welcome!</h3>
+        <p id="user-email-display"></p>
+      </div>
+      <button class="logout-btn" onclick="logout()">Log out</button>
+    </div>
+
+    <!-- TRADING DISCIPLINE & RULE BANNER -->
+    <div style="background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.2); padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-family: 'Inter', sans-serif; font-size: 0.85rem; color: #facc15;">
+      🧠 <b>Core Discipline:</b> Protect capital first. Respect your 5% max daily guardrail and stick to your technical structure.
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card" style="--stat-color: var(--accent);">
+        <h4>Total trades</h4>
+        <div class="stat-value num" id="stat-total">0</div>
+      </div>
+      <div class="stat-card" style="--stat-color: var(--win);">
+        <h4>Win rate</h4>
+        <div class="stat-value num" id="stat-winrate" style="color: var(--win);">0%</div>
+      </div>
+      <div class="stat-card" style="--stat-color: var(--blue);">
+        <h4>Record</h4>
+        <div class="stat-value num" id="stat-record" style="font-size:1.15rem;">0W / 0L</div>
+      </div>
+      <div class="stat-card" style="--stat-color: var(--accent);">
+        <h4>Current streak</h4>
+        <div class="stat-value num" id="stat-streak">—</div>
+      </div>
+      <div class="stat-card" style="--stat-color: var(--accent);">
+        <h4>Avg R:R</h4>
+        <div class="stat-value num" id="stat-avgrr">0.00R</div>
+      </div>
+      <div class="stat-card" style="--stat-color: var(--win);">
+        <h4>Profit factor</h4>
+        <div class="stat-value num" id="stat-profitfactor">0.00</div>
+      </div>
+    </div>
+
+    <!-- PROP FIRM RISK & DRAWDOWN GUARDRAILS -->
+    <div class="panel">
+      <div class="panel-header-row">
+        <h3>Prop firm risk guardrails</h3>
+        <span style="font-size: 0.8rem; color: var(--text-dim);">Max daily limit: 5%</span>
+      </div>
+      <p class="panel-sub" style="margin-bottom: 8px;">Active open risk buffer against standard evaluation parameters.</p>
+      <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-family: 'JetBrains Mono', monospace;">
+        <span id="guardrail-status-text">Safe zone (0.0% risk exposed)</span>
+        <span id="guardrail-pct">100% Buffer</span>
+      </div>
+      <div class="guardrail-bar-bg">
+        <div class="guardrail-bar-fill" id="guardrail-bar" style="width: 100%;"></div>
+      </div>
+    </div>
+
+    <!-- LIVE MARKET SESSIONS & COUNTDOWN (NEW WIDGET) -->
+    <div class="session-card" style="background: var(--card-bg); padding: 14px 18px; border-radius: 8px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color);">
+      <div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">MARKET SESSIONS (WAT)</div>
+        <div id="active-session-display" style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Checking sessions...</div>
+        <div id="session-countdown" style="font-size: 0.8rem; color: var(--text-muted);">Calculating countdown...</div>
+      </div>
+      <div id="wat-time-display" class="num" style="font-size: 1.1rem; font-weight: bold; color: var(--accent);">--:-- WAT</div>
+    </div>
+
+    <!-- LIVE MARKET BOARD -->
+    <div class="panel market-panel">
+      <div class="panel-header-row">
+        <h3>Live markets</h3>
+        <span class="market-updated" id="market-updated">—</span>
+      </div>
+      <div class="market-board" id="market-board">
+        <div class="market-card" data-symbol="GBPUSD">
+          <div class="market-symbol">GBPUSD</div>
+          <div class="market-price num" id="mkt-GBPUSD-price">—</div>
+          <div class="market-change num" id="mkt-GBPUSD-change">—</div>
+          <div class="market-status" id="mkt-GBPUSD-status"><span class="dot"></span>OFFLINE</div>
+        </div>
+        <div class="market-card" data-symbol="USDCAD">
+          <div class="market-symbol">USDCAD</div>
+          <div class="market-price num" id="mkt-USDCAD-price">—</div>
+          <div class="market-change num" id="mkt-USDCAD-change">—</div>
+          <div class="market-status" id="mkt-USDCAD-status"><span class="dot"></span>OFFLINE</div>
+        </div>
+        <div class="market-card" data-symbol="XAUUSD">
+          <div class="market-symbol">GOLD</div>
+          <div class="market-price num" id="mkt-XAUUSD-price">—</div>
+          <div class="market-change num" id="mkt-XAUUSD-change">—</div>
+          <div class="market-status" id="mkt-XAUUSD-status"><span class="dot"></span>OFFLINE</div>
+        </div>
+        <div class="market-card" data-symbol="BTCUSD">
+          <div class="market-symbol">BTCUSD</div>
+          <div class="market-price num" id="mkt-BTCUSD-price">—</div>
+          <div class="market-change num" id="mkt-BTCUSD-change">—</div>
+          <div class="market-status" id="mkt-BTCUSD-status"><span class="dot"></span>OFFLINE</div>
+        </div>
+        <div class="market-card" data-symbol="USDJPY">
+          <div class="market-symbol">USDJPY</div>
+          <div class="market-price num" id="mkt-USDJPY-price">—</div>
+          <div class="market-change num" id="mkt-USDJPY-change">—</div>
+          <div class="market-status" id="mkt-USDJPY-status"><span class="dot"></span>OFFLINE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPACT TRADE ENTRY WITH TAGS & SCREENSHOT FILE UPLOAD -->
+    <div class="panel">
+      <h3>Log & analyze new trade</h3>
+      <p class="panel-sub">Save a setup and get an instant critique from your AI mentor.</p>
+      <form id="trade-form" onsubmit="submitTrade(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Currency pair</label>
+            <input type="text" id="currencyPair" required placeholder="GBPUSD">
+          </div>
+          <div class="form-group">
+            <label>Direction</label>
+            <select id="tradeDirection">
+              <option value="Buy">BUY</option>
+              <option value="Sell">SELL</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Entry price</label>
+            <input type="number" step="any" id="entryPrice" required placeholder="1.3597">
+          </div>
+          <div class="form-group">
+            <label>Exit price</label>
+            <input type="number" step="any" id="exitPrice" placeholder="1.3600">
+          </div>
+          <div class="form-group">
+            <label>Stop loss</label>
+            <input type="number" step="any" id="stopLoss" placeholder="1.3570">
+          </div>
+          <div class="form-group">
+            <label>Take profit</label>
+            <input type="number" step="any" id="takeProfit" placeholder="1.3675">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Trading session</label>
+          <select id="tradeSession">
+            <option value="London">London</option>
+            <option value="New York">New York</option>
+            <option value="Asian">Asian</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Setup & strategy tags</label>
+          <div class="strategy-pills" id="strategy-pills-container">
+            <div class="strategy-pill" onclick="toggleTag(this)">Fair Value Gap</div>
+            <div class="strategy-pill" onclick="toggleTag(this)">Order Block</div>
+            <div class="strategy-pill" onclick="toggleTag(this)">78.6% Fibonacci</div>
+            <div class="strategy-pill" onclick="toggleTag(this)">RSI Divergence</div>
+            <div class="strategy-pill" onclick="toggleTag(this)">Liquidity Sweep</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Outcome</label>
+          <select id="tradeOutcome">
+            <option value="Running">Running</option>
+            <option value="Win">Win</option>
+            <option value="Loss">Loss</option>
+            <option value="BreakEven">Break-even</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Chart screenshot upload</label>
+          <input type="file" id="chartScreenshotInput" accept="image/*" class="file-input">
+          <!-- Hidden input that holds the base64 string for submission -->
+          <input type="hidden" id="chartScreenshot">
+        </div>
+
+        <div class="form-group">
+          <label>Trade notes / thesis</label>
+          <textarea id="tradeNotes" rows="2" placeholder="Setup based on 4hr Fair Value Gap & order block..."></textarea>
+        </div>
+        <button type="submit" class="btn">Save & analyze with AI mentor</button>
+      </form>
+      <div id="ai-result" class="ai-box hidden"></div>
+    </div>
+
+    <!-- JOURNALED TRADES PANEL WITH SEARCH, FILTERS & CSV EXPORT -->
+    <div class="panel">
+      <div class="panel-header-row">
+        <h3>Your journaled trades</h3>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button onclick="exportTradesCSV()" class="btn" style="width:auto; padding:7px 14px; font-size:0.82rem; margin-top:0; background: rgba(234, 179, 8, 0.15); border: 1px solid var(--accent, #eab308); color: var(--accent);">Export CSV</button>
+          <button onclick="confirmReset()" class="btn danger-btn" style="width:auto; padding:7px 14px; font-size:0.82rem; margin-top:0;">Reset all data</button>
+        </div>
+      </div>
+      
+      <div class="filter-bar" style="margin-top: 15px;">
+        <input type="text" id="tradeSearchInput" placeholder="Search pair or notes...">
+        <select id="outcomeFilterSelect">
+          <option value="All">All Outcomes</option>
+          <option value="Win">Win</option>
+          <option value="Loss">Loss</option>
+          <option value="BreakEven">Break-even</option>
+          <option value="Running">Running</option>
+        </select>
+        <select id="sessionFilterSelect">
+          <option value="All">All Sessions</option>
+          <option value="London">London</option>
+          <option value="New York">New York</option>
+          <option value="Asian">Asian</option>
+        </select>
+      </div>
+
+      <div id="trades-list"></div>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div id="trade-modal" class="modal-overlay hidden" onclick="closeModalOnOverlay(event)">
+    <div class="modal-content">
+      <div class="modal-top">
+        <h3 id="modal-pair">—</h3>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-grid">
+        <div>
+          <div class="modal-field-label">Direction</div>
+          <div class="modal-field-value" id="modal-direction">—</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Outcome</div>
+          <div class="modal-field-value" id="modal-outcome">—</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Entry price</div>
+          <div class="modal-field-value num" id="modal-entry">—</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Exit price</div>
+          <div class="modal-field-value num" id="modal-exit">—</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Stop loss</div>
+          <div class="modal-field-label num" id="modal-sl">—</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Take profit</div>
+          <div class="modal-field-value num" id="modal-tp">—</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 15px;">
+        <div class="modal-field-label">Session</div>
+        <div class="modal-field-value" id="modal-session">London</div>
+      </div>
+
+      <div style="margin-top: 15px;">
+        <div class="modal-field-label">Strategy Tags</div>
+        <div class="modal-field-value" id="modal-tags">None</div>
+      </div>
+
+      <div class="modal-notes-label" style="margin-top: 15px;">Trade notes / thesis</div>
+      <div class="modal-notes" id="modal-notes">No notes recorded.</div>
+      
+      <div id="modal-screenshot-container" class="hidden" style="margin-top: 15px;">
+        <div class="modal-field-label" style="margin-bottom: 6px;">Chart Screenshot</div>
+        <img id="modal-screenshot-img" class="screenshot-preview" alt="Chart Setup Screenshot">
+      </div>
+    </div>
+  </div>
+
+<script src="app.js"></script>
+</body>
+</html>

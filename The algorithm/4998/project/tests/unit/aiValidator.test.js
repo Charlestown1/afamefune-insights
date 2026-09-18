@@ -1,0 +1,1 @@
+const test=require('node:test');const assert=require('node:assert/strict');const {validate}=require('../../services/aiValidator');test('AI schema validator rejects hallucinated malformed output',()=>{assert.equal(validate({}),false);assert.equal(validate({observedData:[],interpretation:'x',risks:[],conclusion:'x',bias:'NEUTRAL',confidence:50}),true)});

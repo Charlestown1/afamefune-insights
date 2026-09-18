@@ -1,0 +1,2 @@
+const User=require('../models/User'); const {verifyToken}=require('../utils/jwt');
+module.exports=async(req,res,next)=>{try{const h=req.get('authorization')||''; if(!h.startsWith('Bearer ')) return res.status(401).json({error:'Authentication required'}); const p=verifyToken(h.slice(7)); const u=await User.findById(p.id); if(!u) return res.status(401).json({error:'Authentication required'}); req.user=u; next();}catch(e){res.status(401).json({error:'Invalid or expired authentication token'});}};

@@ -1,0 +1,3 @@
+const mongoose=require('mongoose');
+const schema=new mongoose.Schema({name:{type:String,required:true},symbol:{type:String,required:true,uppercase:true},category:String,price:Number,change24h:Number,risk:String,conviction:{type:Number,min:0,max:100},status:{type:String,enum:['WATCH','BUY ZONE','ACCUMULATE','HOLD','EXITED'],default:'WATCH'},thesis:String,entryZone:String,target1:Number,target2:Number,invalidation:Number,published:{type:Boolean,default:false},publishedAt:Date,createdBy:{type:mongoose.Schema.Types.ObjectId,ref:'User'}},{timestamps:true});
+module.exports=mongoose.models.CoinPick||mongoose.model('CoinPick',schema);

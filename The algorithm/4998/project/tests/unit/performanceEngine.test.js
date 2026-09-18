@@ -1,0 +1,2 @@
+const test=require('node:test');const assert=require('node:assert/strict');const {metrics}=require('../../services/performanceEngine');
+test('performance metrics use R multiples',()=>{const r=[{result:'WIN',resultR:2,closedAt:'2026-01-01'},{result:'LOSS',resultR:-1,closedAt:'2026-01-02'},{result:'BREAKEVEN',resultR:0,closedAt:'2026-01-03'}];const m=metrics(r);assert.equal(m.totalR,1);assert.equal(m.winRate,33.33);assert.equal(m.profitFactor,2);assert.equal(m.maxDrawdown,1)});

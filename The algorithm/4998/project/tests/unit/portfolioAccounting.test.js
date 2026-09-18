@@ -1,0 +1,2 @@
+const test=require('node:test');const assert=require('node:assert/strict');const {applyHolding}=require('../../services/portfolioAccounting');
+test('average cost accounting and oversell protection',()=>{let h=applyHolding(null,{type:'BUY',quantity:2,price:10,fee:0});h=applyHolding(h,{type:'BUY',quantity:2,price:20,fee:0});assert.equal(h.quantity,4);assert.equal(h.averageCost,15);assert.throws(()=>applyHolding(h,{type:'SELL',quantity:5,price:30}))});
